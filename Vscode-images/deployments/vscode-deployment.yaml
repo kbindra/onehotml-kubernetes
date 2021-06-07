@@ -1,0 +1,37 @@
+#Creating MLflow deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vscode-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vscode-deployment
+  template:
+    metadata:
+      labels:
+        app: vscode-deployment
+    spec:
+      volumes:
+        - name: vscode-pvc
+          persistentVolumeClaim:
+            claimName: vscode-pvc
+      containers:
+      - name: vscode-deployment
+        image: alan451/code-server:test
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: "8003"
+        - name: WORK_SPACE
+          value: "/home/vscode/Workspace"
+        - name: VSCODE_JSON
+          value: "/home/vscode/.workspace/tools"
+        - name: USER_DATA_DIR
+          value: "/home/vscode/.config/Code"
+        - name: EXTENSIONS_DIR
+          value: "/home/vscode/.vscode/extensions"
+        volumeMounts:
+        - name: vscode-pvc
+          mountPath: /home/vscode/

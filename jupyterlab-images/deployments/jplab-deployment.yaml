@@ -1,0 +1,31 @@
+#Creating MLflow deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jplab-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jplab-deployment
+  template:
+    metadata:
+      labels:
+        app: jplab-deployment
+    spec:
+      volumes:
+        - name: jplab-pvc
+          persistentVolumeClaim:
+            claimName: jplab-pvc
+      containers:
+      - name: jplab-instance
+        image: alan451/jlab:test
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: "8889"
+        - name: WORK_SPACE
+          value: "/home/jplab/"
+        volumeMounts:
+        - name: jplab-pvc
+          mountPath: /home/jplab/
